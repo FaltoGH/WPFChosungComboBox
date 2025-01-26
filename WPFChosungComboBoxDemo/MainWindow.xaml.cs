@@ -74,7 +74,7 @@ namespace WPFChosungComboBoxDemo
 
                 if (string.IsNullOrWhiteSpace(name))
                 {
-
+                    ccb.Text = null;
                 }
                 else
                 {

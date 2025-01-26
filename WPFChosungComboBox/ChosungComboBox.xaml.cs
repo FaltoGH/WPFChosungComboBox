@@ -210,6 +210,18 @@ namespace WPFChosungComboBox
 
         public bool Separate{get; set; } = true;
 
+        public string Cue
+        {
+            get
+            {
+                return textBlock.Text;
+            }
+            set
+            {
+                textBlock.Text = value;
+            }
+        }
+
         private void PART_EditableTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (Separate)
