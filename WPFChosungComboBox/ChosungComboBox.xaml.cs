@@ -42,14 +42,13 @@ namespace WPFChosungComboBox
 
         public string[] ItemsSource { get; set; }
 
-
         public string Text
         {
             get
             {
-                if (PART_EditableTextBox != null)
+                if (comboBox.PART_EditableTextBox != null)
                 {
-                    return PART_EditableTextBox.Text;
+                    return comboBox.PART_EditableTextBox.Text;
                 }
                 else if(comboBox != null)
                 {
@@ -173,38 +172,13 @@ namespace WPFChosungComboBox
 
         internal bool Log;
 
-        private TextBox PART_EditableTextBox;
-
-        private TextBox TryGetPART_EditableTextBox()
-        {
-            // https://stackoverflow.com/a/52633838/14367566
-
-            if (PART_EditableTextBox == null)
-            {
-                if (comboBox != null)
-                {
-                    ControlTemplate ctrlt = comboBox.Template;
-                    if (ctrlt != null)
-                    {
-                        object element = ctrlt.FindName("PART_EditableTextBox", comboBox);
-                        if (element is TextBox textBox)
-                        {
-                            PART_EditableTextBox = textBox;
-                        }
-                    }
-                }
-            }
-
-            return PART_EditableTextBox;
-        }
-
         private bool textChangedEventHandlerAdded;
         private void AddTextChangedEventHandler()
         {
             if (!textChangedEventHandlerAdded)
             {
                 textChangedEventHandlerAdded = true;
-                PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged;
+                comboBox.PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged;
             }
         }
 
@@ -226,10 +200,10 @@ namespace WPFChosungComboBox
         {
             if (Separate)
             {
-                ChosungHelper.Separate(PART_EditableTextBox);
+                ChosungHelper.Separate(comboBox.PART_EditableTextBox);
             }
             
-            WriteLine($"PART_EditableTextBox.Text: {PART_EditableTextBox.Text}");
+            WriteLine($"PART_EditableTextBox.Text: {comboBox.PART_EditableTextBox.Text}");
             Filter();
             comboBox.SelectedIndex = -1;
         }
@@ -257,7 +231,7 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             }
             else if (e.Property == ComboBox.ActualWidthProperty)
             {
-                TextBox tb = TryGetPART_EditableTextBox();
+                TextBox tb = comboBox.PART_EditableTextBox;
                 if (tb != null)
                 {
                     AddTextChangedEventHandler();

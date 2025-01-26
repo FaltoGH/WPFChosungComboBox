@@ -21,5 +21,27 @@ namespace WPFChosungComboBox
             PropertyChanged?.Invoke(this, e);
         }
 
+        private TextBox part_EditableTextBox;
+        internal TextBox PART_EditableTextBox
+        {
+            get
+            {
+                if (part_EditableTextBox == null)
+                {
+                    ControlTemplate ctrlt = Template;
+                    if (ctrlt != null)
+                    {
+                        object element = ctrlt.FindName("PART_EditableTextBox", this);
+                        if (element is TextBox textBox)
+                        {
+                            part_EditableTextBox = textBox;
+                        }
+                    }
+                }
+
+                return part_EditableTextBox;// possibly null.
+            }
+        }
+
     }
 }
