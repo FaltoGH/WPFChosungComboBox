@@ -97,47 +97,50 @@ namespace WPFChosungComboBox
 
         public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
 
+        private int GetScore(string keyword, string pattern, string itemSource)
+        {
+            bool isMatch = ChosungHelper.IsMatch(itemSource, pattern);
+            if (isMatch)
+            {
+                return int.MaxValue - itemSource.Length;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public int MaxDropDownCount { get; set; } = 10;
+
         private string[] GetFilteredItems()
         {
-            string text = Text;
-
-            string pattern = ChosungHelper.GetPattern(text);
-            int nTrue = 0;
-            bool exception = false;
-
-            string[] filtered = ItemsSource.Where(x =>
+            try
             {
-                if (exception)
+                string text = Text;
+
+                string pattern = ChosungHelper.GetPattern(text);
+
+                Dictionary<string, int> scoreboard = new Dictionary<string, int>();
+
+                foreach (var itemSource in ItemsSource)
                 {
-                    return false;
+                    int score = GetScore(text, pattern, itemSource);
+                    if (score > 0)
+                    {
+                        scoreboard[itemSource] = score;
+                    }
                 }
 
-                bool ret;
 
-                try
-                {
-                    ret = ChosungHelper.IsMatch(x, pattern);
-                }
-                catch (Exception ex)
-                {
-                    FirstChanceException?.Invoke(this, new FirstChanceExceptionEventArgs(ex));
-                    exception = true;
-                    WriteLine(ex);
-                    ret = false;
-                }
-
-                if (ret)
-                {
-                    nTrue++;
-                }
+                string[] ret = scoreboard.OrderByDescending(x => x.Value).Take(MaxDropDownCount).Select(x=>x.Key).ToArray();
 
                 return ret;
-
-            }).ToArray();
-
-            
-
-            return filtered;
+            }
+            catch(Exception ex)
+            {
+                FirstChanceException?.Invoke(this, new FirstChanceExceptionEventArgs(ex));
+                return null;
+            }
         }
 
         private void Filter()
