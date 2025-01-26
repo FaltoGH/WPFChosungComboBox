@@ -60,11 +60,7 @@ namespace WPFChosungComboBox
                         pattern += string.Format("[{0}-{1}]", keychar, (char)(keychar + magic));
                     }
                 }
-                else if (keychar >= 'A' && keychar <= 'z')
-                {
-                    pattern += keychar;
-                }
-                else if (keychar >= '0' && keychar <= '9')
+                else if (char.IsLetterOrDigit(keychar))
                 {
                     pattern += keychar;
                 }
@@ -72,9 +68,9 @@ namespace WPFChosungComboBox
                 {
                     pattern += " ";
                 }
-                else if (keychar == '(' || keychar == ')')
+                else if ((keychar == '(') || (keychar == ')') || (keychar == '\\') || (keychar == '[') || (keychar == ']'))
                 {
-                    pattern += "\\" + keychar;
+                    pattern += ("\\" + keychar);
                 }
                 else
                 {

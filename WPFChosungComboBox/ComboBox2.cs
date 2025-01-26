@@ -42,6 +42,12 @@ namespace WPFChosungComboBox
             }
         }
 
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+            //base.OnSelectionChanged(e);
+        }
+
         internal string Text2
         {
             get

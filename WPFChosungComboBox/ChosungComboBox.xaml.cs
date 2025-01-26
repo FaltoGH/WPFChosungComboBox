@@ -204,10 +204,11 @@ namespace WPFChosungComboBox
             }
             
             Filter();
+
             comboBox.SelectedIndex = -1;
         }
 
-        private bool selectedIndexChanging;
+        private bool selectionLock;
 
         private void comboBox_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -240,14 +241,22 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             }
             else if(e.Property == ComboBox.SelectedIndexProperty)
             {
-                if (!selectedIndexChanging)
+                if (!selectionLock)
                 {
-                    selectedIndexChanging = true;
+                    selectionLock = true;
                     comboBox.SelectedIndex = -1;
-                    selectedIndexChanging = false;
+                    selectionLock = false;
                 }
             }
-
+            else if(e.Property == ComboBox.SelectedItemProperty)
+            {
+                if (!selectionLock)
+                {
+                    selectionLock = true;
+                    comboBox.SelectedItem = null;
+                    selectionLock = false;
+                }
+            }
 
         }
 
@@ -268,10 +277,11 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             WriteLine($"OnEnterKeyDown({sender},{e})");
 
             string[] filtered = GetFilteredItems();
-            if (filtered.Length > 0)
+            if (filtered?.Length > 0)
             {
                 string first = filtered[0];
                 Text = first;
+                comboBox.SelectedItem = first;
             }
 
             EnterKeyDown?.Invoke(sender, e);
