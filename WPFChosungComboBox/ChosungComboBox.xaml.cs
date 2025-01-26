@@ -31,16 +31,13 @@ namespace WPFChosungComboBox
                 if (isDropDownOpen != value)
                 {
                     isDropDownOpen = value;
-                    OnIsDropDownOpenChanged();
                 }
             }
         }
 
-        public virtual void OnIsDropDownOpenChanged()
-        {
-        }
 
         public string[] ItemsSource { get; set; }
+
 
         public string Text
         {
@@ -63,6 +60,7 @@ namespace WPFChosungComboBox
             Log = false;
             InitializeComponent();
         }
+
 
         private void WriteLine(object x)
         {
@@ -141,29 +139,8 @@ namespace WPFChosungComboBox
         }
 
 
-        private bool textChangedFlag;
-
-
-        private void comboBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (textChangedFlag)
-            {
-                return;
-            }
-
-            textChangedFlag = true;
-
-            textChangedFlag = false;
-        }
-
-
-        protected override void OnInitialized(EventArgs e)
-        {
-            base.OnInitialized(e);
-            
-        }
-
         public bool Log { get; set; }
+
 
         private bool textChangedEventHandlerAdded;
         private void AddTextChangedEventHandler()
@@ -175,7 +152,9 @@ namespace WPFChosungComboBox
             }
         }
 
-        public bool Separate{get; set; } = true;
+
+        public bool Separate { get; set; } = true;
+
 
         public string Cue
         {
@@ -188,6 +167,7 @@ namespace WPFChosungComboBox
                 textBlock.Text = value;
             }
         }
+
 
         private void PART_EditableTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -208,7 +188,7 @@ namespace WPFChosungComboBox
             comboBox.SelectedIndex = -1;
         }
 
-        private bool selectionLock;
+
 
         private void comboBox_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -222,15 +202,6 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
                     Filter();
                 }
             }
-            else if (e.Property == ComboBox.IsDropDownOpenProperty)
-            {
-                if (e.OldValue.Equals(true))
-                {
-                    if (e.NewValue.Equals(false))
-                    {
-                    }
-                }
-            }
             else if (e.Property == ComboBox.ActualWidthProperty)
             {
                 TextBox tb = comboBox.PART_EditableTextBox;
@@ -239,25 +210,6 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
                     AddTextChangedEventHandler();
                 }
             }
-            else if(e.Property == ComboBox.SelectedIndexProperty)
-            {
-                if (!selectionLock)
-                {
-                    selectionLock = true;
-                    comboBox.SelectedIndex = -1;
-                    selectionLock = false;
-                }
-            }
-            else if(e.Property == ComboBox.SelectedItemProperty)
-            {
-                if (!selectionLock)
-                {
-                    selectionLock = true;
-                    comboBox.SelectedItem = null;
-                    selectionLock = false;
-                }
-            }
-
         }
 
         private void comboBox_KeyDown(object sender, KeyEventArgs e)

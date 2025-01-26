@@ -14,11 +14,13 @@ namespace WPFChosungComboBox
     {
         internal event DependencyPropertyChangedEventHandler PropertyChanged;
 
+
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
             PropertyChanged?.Invoke(this, e);
         }
+
 
         private TextBox part_EditableTextBox;
         internal TextBox PART_EditableTextBox
@@ -42,11 +44,6 @@ namespace WPFChosungComboBox
             }
         }
 
-        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-        {
-            e.Handled = true;
-            //base.OnSelectionChanged(e);
-        }
 
         internal string Text2
         {
@@ -56,11 +53,10 @@ namespace WPFChosungComboBox
                 {
                     return part_EditableTextBox.Text;
                 }
-
                 return Text;
-
             }
         }
+
 
     }
 }

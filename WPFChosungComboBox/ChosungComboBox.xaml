@@ -18,7 +18,6 @@
                              PreviewKeyDown="comboBox_PreviewKeyDown"
                              KeyDown="comboBox_KeyDown"
                              SelectionChanged="comboBox_SelectionChanged"
-                             TextBoxBase.TextChanged="comboBox_TextChanged"
                              PropertyChanged="comboBox_PropertyChanged"
                              DropDownClosed="comboBox_DropDownClosed"
                              HorizontalContentAlignment="Left"
