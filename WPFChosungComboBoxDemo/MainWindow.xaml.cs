@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,9 @@ namespace WPFChosungComboBoxDemo
         public MainWindow()
         {
             InitializeComponent();
+
+            Assembly assembly = typeof(WPFChosungComboBox.ChosungComboBox).Assembly;
+            Title += " " + assembly.GetName().Version.ToString();
 
             string text = File.ReadAllText("codelist.txt");
             string[] tokens = text.Split(';');
