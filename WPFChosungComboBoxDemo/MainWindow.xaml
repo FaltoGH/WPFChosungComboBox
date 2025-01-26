@@ -1,0 +1,19 @@
+﻿<Window x:Class="WPFChosungComboBoxDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFChosungComboBoxDemo"
+        xmlns:chosung="clr-namespace:WPFChosungComboBox;assembly=WPFChosungComboBox"
+        mc:Ignorable="d"
+        Title="WPFChosungComboBoxDemo" Height="450" Width="450"
+        WindowStartupLocation="CenterScreen"
+        Background="{x:Static SystemColors.ActiveCaptionTextBrush}"
+        FontSize="15.9">
+    <Grid Margin="9">
+        <StackPanel Margin="9">
+            <chosung:ChosungComboBox x:Name="ccb" EnterKeyDown="ccb_EnterKeyDown" Margin="9" FirstChanceException="ccb_FirstChanceException"/>
+            <TextBox Margin="9" x:Name="tb" KeyDown="tb_KeyDown"/>
+        </StackPanel>
+    </Grid>
+</Window>

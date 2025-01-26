@@ -1,7 +1,7 @@
-﻿<Application x:Class="Wpf48.App"
+﻿<Application x:Class="WPFChosungComboBoxDemo.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Wpf48"
+             xmlns:local="clr-namespace:WPFChosungComboBoxDemo"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

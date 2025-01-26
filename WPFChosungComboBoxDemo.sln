@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf48", "Wpf48\Wpf48.csproj", "{E6CAB31E-E995-4175-8BD2-6EC39731CD4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFChosungComboBoxDemo", "WPFChosungComboBoxDemo\WPFChosungComboBoxDemo.csproj", "{E6CAB31E-E995-4175-8BD2-6EC39731CD4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChosungComboBox", "ChosungComboBox\ChosungComboBox.csproj", "{57095AC1-AF28-4EE6-BD6E-F61271DD4BAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFChosungComboBox", "WPFChosungComboBox\WPFChosungComboBox.csproj", "{57095AC1-AF28-4EE6-BD6E-F61271DD4BAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
