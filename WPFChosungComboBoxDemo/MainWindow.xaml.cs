@@ -26,6 +26,7 @@ namespace WPFChosungComboBoxDemo
         private readonly StringDictionary code2name;
         private readonly StringDictionary name2code;
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -52,41 +53,45 @@ namespace WPFChosungComboBoxDemo
             ccb.ItemsSource = jmnames.ToArray();
         }
 
-        private void ccb_EnterKeyDown(object sender, EventArgs e)
-        {
-            string jmname = ccb.Text;
-            string jmcode = name2code[jmname];
-            if (string.IsNullOrWhiteSpace(jmcode))
-            {
-
-            }
-            else
-            {
-                tb.Text = jmcode;
-            }
-        }
 
         private void tb_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
-                string name = code2name[tb.Text];
-
-                if (string.IsNullOrWhiteSpace(name))
+                string text = tb.Text;
+                if (!string.IsNullOrWhiteSpace(text))
                 {
-                    ccb.Text = null;
+                    string name = code2name[text];
+                    if (string.IsNullOrWhiteSpace(name))
+                    {
+                        ccb.Text = null;
+                    }
+                    else
+                    {
+                        ccb.Text = name;
+                    }
                 }
-                else
-                {
-                    ccb.Text = name;
-                }
-
             }
         }
+
 
         private void ccb_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
             Console.WriteLine(e.Exception);
+        }
+
+
+        private void ccb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string jmname = ccb.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(jmname))
+            {
+                string jmcode = name2code[jmname];
+                if (!string.IsNullOrWhiteSpace(jmcode))
+                {
+                    tb.Text = jmcode;
+                }
+            }
         }
 
     }

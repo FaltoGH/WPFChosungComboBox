@@ -12,7 +12,7 @@
         FontSize="15.9">
     <Grid Margin="9">
         <StackPanel Margin="9">
-            <chosung:ChosungComboBox x:Name="ccb" EnterKeyDown="ccb_EnterKeyDown"
+            <chosung:ChosungComboBox x:Name="ccb" SelectionChanged="ccb_SelectionChanged"
                                      Margin="9" FirstChanceException="ccb_FirstChanceException"
                                      Cue="종목명, 초성 검색" Log="True"/>
             <TextBox Margin="9" x:Name="tb" KeyDown="tb_KeyDown"/>

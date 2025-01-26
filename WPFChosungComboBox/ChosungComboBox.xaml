@@ -20,6 +20,7 @@
                              SelectionChanged="comboBox_SelectionChanged"
                              PropertyChanged="comboBox_PropertyChanged"
                              DropDownClosed="comboBox_DropDownClosed"
+                             SizeChanged="comboBox_SizeChanged"
                              HorizontalContentAlignment="Left"
                              VerticalContentAlignment="Center">
                 <local:WatermarkService.Watermark>

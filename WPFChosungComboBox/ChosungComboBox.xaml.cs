@@ -104,27 +104,32 @@ namespace WPFChosungComboBox
         {
             try
             {
-                
                 string text = keyword;
-
-                string pattern = ChosungHelper.GetPattern(text);
-                WriteLine("pattern: " + pattern);
-
-                Dictionary<string, int> scoreboard = new Dictionary<string, int>();
-
-                foreach (var itemSource in ItemsSource)
+                if (text != null)
                 {
-                    int score = GetScore(text, pattern, itemSource);
-                    if (score > 0)
+                    string pattern = ChosungHelper.GetPattern(text);
+                    WriteLine("pattern: " + pattern);
+
+                    Dictionary<string, int> scoreboard = new Dictionary<string, int>();
+
+                    foreach (var itemSource in ItemsSource)
                     {
-                        scoreboard[itemSource] = score;
+                        int score = GetScore(text, pattern, itemSource);
+                        if (score > 0)
+                        {
+                            scoreboard[itemSource] = score;
+                        }
                     }
+
+
+                    string[] ret = scoreboard.OrderByDescending(x => x.Value).Take(MaxDropDownCount).Select(x => x.Key).ToArray();
+
+                    return ret;
                 }
-
-
-                string[] ret = scoreboard.OrderByDescending(x => x.Value).Take(MaxDropDownCount).Select(x=>x.Key).ToArray();
-
-                return ret;
+                else
+                {
+                    return null;
+                }
             }
             catch(Exception ex)
             {
@@ -142,15 +147,7 @@ namespace WPFChosungComboBox
         public bool Log { get; set; }
 
 
-        private bool textChangedEventHandlerAdded;
-        private void AddTextChangedEventHandler()
-        {
-            if (!textChangedEventHandlerAdded)
-            {
-                textChangedEventHandlerAdded = true;
-                comboBox.PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged;
-            }
-        }
+
 
 
         public bool Separate { get; set; } = true;
@@ -185,41 +182,33 @@ namespace WPFChosungComboBox
             
             Filter();
 
-            comboBox.SelectedIndex = -1;
         }
-
 
 
         private void comboBox_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             WriteLine(
 $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?? "null"}'");
-
-            if (e.Property == ComboBox.TextProperty)
-            {
-                if (!textChangedEventHandlerAdded)
-                {
-                    Filter();
-                }
-            }
-            else if (e.Property == ComboBox.ActualWidthProperty)
-            {
-                TextBox tb = comboBox.PART_EditableTextBox;
-                if (tb != null)
-                {
-                    AddTextChangedEventHandler();
-                }
-            }
         }
+
 
         private void comboBox_KeyDown(object sender, KeyEventArgs e)
         {
             WriteLine("ComboBox.KeyDown");
         }
 
+        public event SelectionChangedEventHandler SelectionChanged;
+
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WriteLine("ComboBox.SelectionChanged");
+            WriteLine($"ComboBox.SelectionChanged: SelectedItem: {comboBox.SelectedItem ?? "null"}");
+            SelectionChanged?.Invoke(sender, e);
+        }
+
+        public object SelectedItem
+        {
+            get => comboBox.SelectedItem;
+            set => comboBox.SelectedItem = value;
         }
 
         public event EventHandler EnterKeyDown;
@@ -273,6 +262,12 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             }
         }
 
+
+        private void comboBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Now PART_EditableTextBox is initialized.
+            comboBox.PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged;
+        }
 
     }
 }
