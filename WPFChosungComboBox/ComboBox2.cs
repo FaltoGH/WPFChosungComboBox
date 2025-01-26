@@ -43,5 +43,19 @@ namespace WPFChosungComboBox
             }
         }
 
+        internal string Text2
+        {
+            get
+            {
+                if (part_EditableTextBox != null)
+                {
+                    return part_EditableTextBox.Text;
+                }
+
+                return Text;
+
+            }
+        }
+
     }
 }

@@ -338,8 +338,11 @@ new System.Windows.Controls.TextChangedEventHandler(Control_GotKeyboardFocus));
         /// <returns>true if the watermark should be shown; false otherwise</returns>
         private static bool ShouldShowWatermark(Control c)
         {
-            
-            if (c is ComboBox)
+            if(c is ComboBox2 comboBox2)
+            {
+                return comboBox2.Text2 == string.Empty;
+            }
+            else if (c is ComboBox)
             {
                 return (c as ComboBox).Text == string.Empty;
             }
