@@ -12,7 +12,6 @@ namespace WPFChosungComboBox
 {
     internal class ComboBox2:ComboBox
     {
-
         internal event DependencyPropertyChangedEventHandler PropertyChanged;
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)

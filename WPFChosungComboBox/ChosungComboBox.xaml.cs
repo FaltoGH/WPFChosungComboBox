@@ -46,18 +46,7 @@ namespace WPFChosungComboBox
         {
             get
             {
-                if (comboBox.PART_EditableTextBox != null)
-                {
-                    return comboBox.PART_EditableTextBox.Text;
-                }
-                else if(comboBox != null)
-                {
-                    return comboBox.Text;
-                }
-                else
-                {
-                    return null;
-                }
+                return comboBox?.Text2;
             }
             set
             {
@@ -111,13 +100,17 @@ namespace WPFChosungComboBox
 
         public int MaxDropDownCount { get; set; } = 10;
 
+        private string keyword;
+
         private string[] GetFilteredItems()
         {
             try
             {
-                string text = Text;
+                
+                string text = keyword;
 
                 string pattern = ChosungHelper.GetPattern(text);
+                WriteLine("pattern: " + pattern);
 
                 Dictionary<string, int> scoreboard = new Dictionary<string, int>();
 
@@ -170,7 +163,7 @@ namespace WPFChosungComboBox
             
         }
 
-        internal bool Log;
+        public bool Log { get; set; }
 
         private bool textChangedEventHandlerAdded;
         private void AddTextChangedEventHandler()
@@ -204,9 +197,17 @@ namespace WPFChosungComboBox
             }
             
             WriteLine($"PART_EditableTextBox.Text: {comboBox.PART_EditableTextBox.Text}");
+
+            if (comboBox.IsDropDownOpen)
+            {
+                keyword = comboBox.PART_EditableTextBox.Text;
+            }
+            
             Filter();
             comboBox.SelectedIndex = -1;
         }
+
+        private bool selectedIndexChanging;
 
         private void comboBox_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -237,6 +238,15 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
                     AddTextChangedEventHandler();
                 }
             }
+            else if(e.Property == ComboBox.SelectedIndexProperty)
+            {
+                if (!selectedIndexChanging)
+                {
+                    selectedIndexChanging = true;
+                    comboBox.SelectedIndex = -1;
+                    selectedIndexChanging = false;
+                }
+            }
 
 
         }
@@ -253,8 +263,10 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
 
         public event EventHandler EnterKeyDown;
 
-        public virtual void OnPossibleEnterKeyDown(object sender, EventArgs e)
+        public virtual void OnEnterKeyDown(object sender, EventArgs e)
         {
+            WriteLine($"OnEnterKeyDown({sender},{e})");
+
             string[] filtered = GetFilteredItems();
             if (filtered.Length > 0)
             {
@@ -265,20 +277,40 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             EnterKeyDown?.Invoke(sender, e);
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            WriteLine($"OnKeyDown {e.Key}");
+        }
+
+        private Key lastPreviewKeyDown;
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+            WriteLine($"OnPreviewKeyDown {e.Key}");
+            lastPreviewKeyDown = e.Key;
+        }
+
         private void comboBox_DropDownClosed(object sender, EventArgs e)
         {
+            WriteLine("ComboBox.DropDownClosed");
+
             if (comboBox.IsSelectionBoxHighlighted)
             {
                 if (!comboBox.IsMouseCaptureWithin)
                 {
                     if (!comboBox.IsMouseCaptured)
                     {
-                        OnPossibleEnterKeyDown(sender, e);
-                        
+                        if (lastPreviewKeyDown == Key.Enter)
+                        {
+                            OnEnterKeyDown(sender, e);
+                        }
                     }
                 }
             }
         }
+
 
     }
 }

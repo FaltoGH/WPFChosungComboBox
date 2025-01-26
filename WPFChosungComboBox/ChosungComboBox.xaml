@@ -24,7 +24,7 @@
                              HorizontalContentAlignment="Left"
                              VerticalContentAlignment="Center">
                 <local:WatermarkService.Watermark>
-                    <TextBlock x:Name="textBlock" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="textBlock" VerticalAlignment="Center" d:Text="Sample Cue"/>
                 </local:WatermarkService.Watermark>
             </local:ComboBox2>
         </AdornerDecorator>
