@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
@@ -21,24 +22,17 @@ namespace WPFChosungComboBox
 {
     public partial class ChosungComboBox : UserControl
     {
-
-        private bool isDropDownOpen;
-        public bool IsDropDownOpen
+        public string[] ItemsSource
         {
-            get => isDropDownOpen;
+            get
+            {
+                return viewModel.ItemsSource;
+            }
             set
             {
-                if (isDropDownOpen != value)
-                {
-                    isDropDownOpen = value;
-                }
+                viewModel.ItemsSource = value;
             }
         }
-
-
-        public string[] ItemsSource { get; set; }
-
-
         public string Text
         {
             get
@@ -53,15 +47,16 @@ namespace WPFChosungComboBox
                 comboBox.Text = value;
             }
         }
-        
-
+        public event EventHandler<object> WriteLine;
+        public int MaxDropDownCount { get; set; } = 10;
         public ChosungComboBox()
         {
             InitializeComponent();
+            
+            CollectionViewSource cvs = (CollectionViewSource)Resources["cvs"];
+            cvs.SortDescriptions.Add(new SortDescription("Length", ListSortDirection.Ascending));
         }
-
-
-        public event EventHandler<object> WriteLine;
+        public event EventHandler<string> SelectionChanged;
 
 
         private void PWriteLine(object x)
@@ -73,8 +68,10 @@ namespace WPFChosungComboBox
         private void comboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             PWriteLine("ComboBox.PreviewKeyDown");
-
-            comboBox.IsDropDownOpen = true;
+            if (comboBox.IsKeyboardFocusWithin)
+            {
+                comboBox.IsDropDownOpen = true;
+            }
         }
 
         public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
@@ -92,22 +89,39 @@ namespace WPFChosungComboBox
             }
         }
 
-        public int MaxDropDownCount { get; set; } = 10;
+
+
 
         private string keyword;
-
-        private string[] GetFilteredItems()
+        private string Keyword
         {
+            get
+            {
+                return keyword;
+            }
+            set
+            {
+                if (keyword != value)
+                {
+                    keyword = value;
+                }
+            }
+        }
+
+        private void Filter()
+        {
+            string[] ret;
+
             try
             {
-                string text = keyword;
+                string text = Keyword;
                 if (text != null)
                 {
                     string pattern = ChosungHelper.GetPattern(text);
                     PWriteLine("pattern: " + pattern);
 
                     Dictionary<string, int> scoreboard = new Dictionary<string, int>();
-
+                    
                     foreach (var itemSource in ItemsSource)
                     {
                         int score = GetScore(text, pattern, itemSource);
@@ -117,26 +131,20 @@ namespace WPFChosungComboBox
                         }
                     }
 
-
-                    string[] ret = scoreboard.OrderByDescending(x => x.Value).Take(MaxDropDownCount).Select(x => x.Key).ToArray();
-
-                    return ret;
+                    ret = scoreboard.OrderByDescending(x => x.Value).Take(MaxDropDownCount).Select(x => x.Key).ToArray();
                 }
                 else
                 {
-                    return null;
+                    ret = null;
                 }
             }
             catch(Exception ex)
             {
                 FirstChanceException?.Invoke(this, new FirstChanceExceptionEventArgs(ex));
-                return null;
+                ret = null;
             }
-        }
 
-        private void Filter()
-        {
-            comboBox.ItemsSource = GetFilteredItems();
+            Filtered = ret;
         }
 
 
@@ -156,22 +164,41 @@ namespace WPFChosungComboBox
         }
 
 
+
         private void PART_EditableTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (Separate)
             {
                 ChosungHelper.Separate(comboBox.PART_EditableTextBox);
             }
-            
+
             PWriteLine($"PART_EditableTextBox.Text: {comboBox.PART_EditableTextBox.Text}");
 
-            if (comboBox.IsDropDownOpen)
-            {
-                keyword = comboBox.PART_EditableTextBox.Text;
-            }
-            
+            Keyword = comboBox.PART_EditableTextBox.Text;
             Filter();
+            FilteredSet = Filtered.ToHashSet();
+            PListCollectionView.Refresh();
+        }
 
+
+        private string[] Filtered;
+        private HashSet<string> FilteredSet;
+        private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            string item = e?.Item?.ToString();
+            if (!string.IsNullOrWhiteSpace(item))
+            {
+                e.Accepted = FilteredSet?.Contains(item) == true;
+            }
+        }
+
+
+        private ListCollectionView PListCollectionView
+        {
+            get
+            {
+                return (ListCollectionView)comboBox.ItemsSource;
+            }
         }
 
 
@@ -182,18 +209,15 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
         }
 
 
-        private void comboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            PWriteLine("ComboBox.KeyDown");
-        }
-
-        public event SelectionChangedEventHandler SelectionChanged;
-
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             PWriteLine($"ComboBox.SelectionChanged: SelectedItem: {comboBox.SelectedItem ?? "null"}");
-            SelectionChanged?.Invoke(sender, e);
+            if(comboBox.SelectedItem != null)
+            {
+                SelectionChanged?.Invoke(sender, comboBox.SelectedItem.ToString());
+            }
         }
+
 
         public object SelectedItem
         {
@@ -201,62 +225,60 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
             set => comboBox.SelectedItem = value;
         }
 
-        public event EventHandler EnterKeyDown;
-
-        public virtual void OnEnterKeyDown(object sender, EventArgs e)
-        {
-            PWriteLine($"OnEnterKeyDown({sender},{e})");
-
-            string[] filtered = GetFilteredItems();
-            if (filtered?.Length > 0)
-            {
-                string first = filtered[0];
-                Text = first;
-                comboBox.SelectedItem = first;
-            }
-
-            EnterKeyDown?.Invoke(sender, e);
-        }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            PWriteLine($"OnKeyDown {e.Key}");
+            PWriteLine($"OnKeyDown: {e.Key}");
         }
 
-        private Key lastPreviewKeyDown;
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
-            PWriteLine($"OnPreviewKeyDown {e.Key}");
-            lastPreviewKeyDown = e.Key;
-        }
-
-        private void comboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            PWriteLine("ComboBox.DropDownClosed");
-
-            if (comboBox.IsSelectionBoxHighlighted)
+            PWriteLine($"OnPreviewKeyDown: {e.Key}");
+            if (e.Key == Key.Enter)
             {
-                if (!comboBox.IsMouseCaptureWithin)
+                if (Filtered != null)
                 {
-                    if (!comboBox.IsMouseCaptured)
+                    if (Filtered.Length > 0)
                     {
-                        if (lastPreviewKeyDown == Key.Enter)
-                        {
-                            OnEnterKeyDown(sender, e);
-                        }
+                        string first = Filtered[0];
+                        Text = first;
+                        comboBox.IsDropDownOpen = false;
+                        SelectionChanged?.Invoke(this, first);
+                        e.Handled = true;
                     }
                 }
+            }
+            comboBox.SelectedItem = null;
+        }
+
+
+        private void comboBox_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (comboBox.IsKeyboardFocusWithin)
+            {
+                comboBox.IsDropDownOpen = true;
             }
         }
 
 
-        private void comboBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void comboBox_IsMouseDirectlyOverChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            // Now PART_EditableTextBox is initialized.
-            comboBox.PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged;
+        }
+
+
+        private void comboBox_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+
+        private void StackPanel2_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            PWriteLine(
+$"StackPanel.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?? "null"}'");
         }
 
     }

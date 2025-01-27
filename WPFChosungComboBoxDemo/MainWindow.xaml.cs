@@ -85,9 +85,9 @@ namespace WPFChosungComboBoxDemo
         }
 
 
-        private void ccb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ccb_SelectionChanged(object sender, string e)
         {
-            string jmname = ccb.SelectedItem?.ToString();
+            string jmname = e;
             if (!string.IsNullOrWhiteSpace(jmname))
             {
                 string jmcode = name2code[jmname];

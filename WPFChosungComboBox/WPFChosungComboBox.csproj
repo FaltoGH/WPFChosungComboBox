@@ -49,6 +49,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChosungViewModel.cs" />
+    <Compile Include="Notifier.cs" />
+    <Compile Include="StackPanel2.cs" />
     <Compile Include="WatermarkAdorner.cs" />
     <Page Include="ChosungComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>

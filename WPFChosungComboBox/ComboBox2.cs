@@ -58,5 +58,18 @@ namespace WPFChosungComboBox
         }
 
 
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            PART_EditableTextBox.TextChanged += PART_EditableTextBox_TextChanged; ;
+        }
+
+
+        public event TextChangedEventHandler TextChanged2;
+        private void PART_EditableTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextChanged2?.Invoke(sender, e);
+        }
+
     }
 }

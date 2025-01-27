@@ -80,12 +80,30 @@ namespace WPFChosungComboBox
             return pattern;
         }
 
+
         private static readonly TimeSpan matchTimeout = new TimeSpan(0, 0, 0, 0, 99);
+
 
         internal static bool IsMatch(string input, string pattern)
         {
             return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase, matchTimeout);
         }
+
+
+        internal static bool TryIsMatch(string input, string pattern)
+        {
+            bool ret;
+            try
+            {
+                ret = IsMatch(input, pattern);
+            }
+            catch
+            {
+                ret = false;
+            }
+            return ret;
+        }
+
 
         public static IReadOnlyDictionary<string, string> ReplaceDict = new Dictionary<string, string>()
         {

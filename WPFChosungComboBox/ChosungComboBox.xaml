@@ -6,24 +6,36 @@
              xmlns:local="clr-namespace:WPFChosungComboBox"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="400"
-             x:Name="root">
+             x:Name="__root">
+
+    <UserControl.DataContext>
+        <local:ChosungViewModel x:Name="viewModel"/>
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="cvs" Source="{Binding ItemsSource}" Filter="CollectionViewSource_Filter"/>
+    </UserControl.Resources>
 
     <Grid>
         <AdornerDecorator>
-            <local:ComboBox2 IsEditable="True"
-                             IsDropDownOpen="{Binding ElementName=root, Path=IsDropDownOpen}"
-                             StaysOpenOnEdit="True"
-                             IsTextSearchEnabled="False"
-                             x:Name="comboBox"
-                             PreviewKeyDown="comboBox_PreviewKeyDown"
-                             KeyDown="comboBox_KeyDown"
-                             SelectionChanged="comboBox_SelectionChanged"
-                             PropertyChanged="comboBox_PropertyChanged"
-                             DropDownClosed="comboBox_DropDownClosed"
-                             SizeChanged="comboBox_SizeChanged"
-                             HorizontalContentAlignment="Left"
-                             VerticalContentAlignment="Center">
-                <local:WatermarkService.Watermark>
+
+            <local:ComboBox2 IsEditable="True" IsDropDownOpen="False" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+TextChanged2="PART_EditableTextBox_TextChanged" IsMouseDirectlyOverChanged="comboBox_IsMouseDirectlyOverChanged"
+x:Name="comboBox" PreviewKeyDown="comboBox_PreviewKeyDown" SelectionChanged="comboBox_SelectionChanged" PropertyChanged="comboBox_PropertyChanged"
+HorizontalContentAlignment="Left" VerticalContentAlignment="Center" IsKeyboardFocusWithinChanged="comboBox_IsKeyboardFocusWithinChanged"
+PreviewMouseMove="comboBox_PreviewMouseMove"
+ItemsSource="{Binding Source={StaticResource cvs}}">
+                
+                
+                <local:ComboBox2.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <local:StackPanel2 PropertyChanged="StackPanel2_PropertyChanged">
+                        </local:StackPanel2>
+                    </ItemsPanelTemplate>
+                </local:ComboBox2.ItemsPanel>
+                
+                
+            <local:WatermarkService.Watermark>
                     <TextBlock x:Name="textBlock" VerticalAlignment="Center" d:Text="Sample Cue"/>
                 </local:WatermarkService.Watermark>
             </local:ComboBox2>
