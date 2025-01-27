@@ -1,5 +1,1 @@
-# WPFChosungComboBox
-
-![](fav.gif)
-
-[나는 한글이 밉다.](https://youtu.be/_2MtnLyBdbk?feature=shared)
+![](GIF%202025-01-27%20오후%207-54-15.gif)
