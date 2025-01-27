@@ -98,5 +98,10 @@ namespace WPFChosungComboBoxDemo
             }
         }
 
+        private void ccb_WriteLine(object sender, object e)
+        {
+            Console.WriteLine($"{DateTime.Now:mm:ss.fff} {e}");
+        }
+
     }
 }

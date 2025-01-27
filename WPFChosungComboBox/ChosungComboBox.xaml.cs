@@ -57,26 +57,22 @@ namespace WPFChosungComboBox
 
         public ChosungComboBox()
         {
-            Log = false;
             InitializeComponent();
         }
 
 
-        private void WriteLine(object x)
+        public event EventHandler<object> WriteLine;
+
+
+        private void PWriteLine(object x)
         {
-            if (Log)
-            {
-                Console.WriteLine($"{DateTime.Now:mm:ss.fff} {x}");
-            }
+            WriteLine?.Invoke(this, x);
         }
 
 
         private void comboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Log)
-            {
-                WriteLine("ComboBox.PreviewKeyDown");
-            }
+            PWriteLine("ComboBox.PreviewKeyDown");
 
             comboBox.IsDropDownOpen = true;
         }
@@ -108,7 +104,7 @@ namespace WPFChosungComboBox
                 if (text != null)
                 {
                     string pattern = ChosungHelper.GetPattern(text);
-                    WriteLine("pattern: " + pattern);
+                    PWriteLine("pattern: " + pattern);
 
                     Dictionary<string, int> scoreboard = new Dictionary<string, int>();
 
@@ -144,12 +140,6 @@ namespace WPFChosungComboBox
         }
 
 
-        public bool Log { get; set; }
-
-
-
-
-
         public bool Separate { get; set; } = true;
 
 
@@ -173,7 +163,7 @@ namespace WPFChosungComboBox
                 ChosungHelper.Separate(comboBox.PART_EditableTextBox);
             }
             
-            WriteLine($"PART_EditableTextBox.Text: {comboBox.PART_EditableTextBox.Text}");
+            PWriteLine($"PART_EditableTextBox.Text: {comboBox.PART_EditableTextBox.Text}");
 
             if (comboBox.IsDropDownOpen)
             {
@@ -187,21 +177,21 @@ namespace WPFChosungComboBox
 
         private void comboBox_PropertyChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            WriteLine(
+            PWriteLine(
 $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?? "null"}'");
         }
 
 
         private void comboBox_KeyDown(object sender, KeyEventArgs e)
         {
-            WriteLine("ComboBox.KeyDown");
+            PWriteLine("ComboBox.KeyDown");
         }
 
         public event SelectionChangedEventHandler SelectionChanged;
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WriteLine($"ComboBox.SelectionChanged: SelectedItem: {comboBox.SelectedItem ?? "null"}");
+            PWriteLine($"ComboBox.SelectionChanged: SelectedItem: {comboBox.SelectedItem ?? "null"}");
             SelectionChanged?.Invoke(sender, e);
         }
 
@@ -215,7 +205,7 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
 
         public virtual void OnEnterKeyDown(object sender, EventArgs e)
         {
-            WriteLine($"OnEnterKeyDown({sender},{e})");
+            PWriteLine($"OnEnterKeyDown({sender},{e})");
 
             string[] filtered = GetFilteredItems();
             if (filtered?.Length > 0)
@@ -231,7 +221,7 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            WriteLine($"OnKeyDown {e.Key}");
+            PWriteLine($"OnKeyDown {e.Key}");
         }
 
         private Key lastPreviewKeyDown;
@@ -239,13 +229,13 @@ $"ComboBox.PropertyChanged: {e.Property} '{e.OldValue ?? "null"}' '{e.NewValue ?
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             base.OnPreviewKeyDown(e);
-            WriteLine($"OnPreviewKeyDown {e.Key}");
+            PWriteLine($"OnPreviewKeyDown {e.Key}");
             lastPreviewKeyDown = e.Key;
         }
 
         private void comboBox_DropDownClosed(object sender, EventArgs e)
         {
-            WriteLine("ComboBox.DropDownClosed");
+            PWriteLine("ComboBox.DropDownClosed");
 
             if (comboBox.IsSelectionBoxHighlighted)
             {
